@@ -1,10 +1,16 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { calculateResult } from "../utils/calculate-result";
 
 const CalculatorContainer = styled.div`
   display: inline-block;
   border: 1px solid #ccc;
   padding: 10px;
+`;
+
+const Mssg = styled.div`
+  color: red;
+  font-size: 12px;
 `;
 
 const CalculatorInput = styled.input`
@@ -23,28 +29,24 @@ const CalculatorButton = styled.button`
 const Calculator: React.FC = () => {
   const [expression, setExpression] = useState<string>("");
   const [result, setResult] = useState<number>(0);
+  const [message, setMessage] = useState<string>("");
 
-  const calculateResult = () => {
-    const isNumberPlusMinusRegex = /^[0-9+-]+$/;
-    if (isNumberPlusMinusRegex.test(expression)) {
-      // value starts from number and end with number only
-      const cleanedValue = expression.replace(/(^|[^0-9+-])|([^0-9+-]$)/g, " ");
-      setResult(eval(cleanedValue));
-    } else {
-      const cleanedValue = expression.replace(/[^0-9+-]/g, "");
-      console.log("Cleaned input:", cleanedValue);
-    }
-  };
   return (
     <CalculatorContainer>
       <CalculatorInput
         onChange={(value) => setExpression(value.target.value)}
       />
-      <CalculatorButton onClick={() => calculateResult()}>
+      <CalculatorButton
+        onClick={() => {
+          const calculationResult = calculateResult(expression);
+          if (calculationResult) setMessage(calculationResult.message);
+          setResult(calculationResult.result);
+        }}
+      >
         check result
       </CalculatorButton>
       <br />
-      <div>Result: {result}</div>
+      {message ? <Mssg>{message}</Mssg> : <div>Result: {result}</div>}
     </CalculatorContainer>
   );
 };
