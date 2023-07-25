@@ -1,5 +1,5 @@
 const hasNumberRegex = /\d/;
-const hasForbiddenSymbolsRegex = /[^0-9\+\-]/
+const hasForbiddenSymbolsRegex = /[^0-9\+\-\.]/
 const startsOrEndsWithPlusOrEndsWithMinus = /^(\+.*|.*-|.*\+)$/;
 
 export const MSSGS = {
@@ -47,7 +47,7 @@ export const calculateResult = (expression: string) => {
     }
 
     return {
-        result: parseInt(eval(noSpacesExpression)),
+        result: parseFloat(eval(noSpacesExpression)),
         message: ''
     }
 
