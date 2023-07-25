@@ -1,6 +1,6 @@
 const hasNumberRegex = /\d/;
-const hasForbiddenSymbolsRegex = /[^0-9+-]/g
-const startsOrEndsWithPlusOrEndsWithMinus = /^(\+.*|.*-)$/;
+const hasForbiddenSymbolsRegex = /[^0-9\+\-]/
+const startsOrEndsWithPlusOrEndsWithMinus = /^(\+.*|.*-|.*\+)$/;
 
 export const MSSGS = {
     forbiddenSymbols: "Remove forbidden symbols. Use only +, - and numbers.",
@@ -10,9 +10,18 @@ export const MSSGS = {
 }
 
 export const calculateResult = (expression: string) => {
-    const hasNumber = hasNumberRegex.test(expression);
-    const hasForbiddenSymbols = hasForbiddenSymbolsRegex.test(expression);
-    const isStartsOrEndsWithPlusOrMinus = startsOrEndsWithPlusOrEndsWithMinus.test(expression)
+    const noSpacesExpression = expression.replace(/\s/g, '');
+    const hasNumber = hasNumberRegex.test(noSpacesExpression);
+    const hasForbiddenSymbols = hasForbiddenSymbolsRegex.test(noSpacesExpression);
+    console.log({ hasForbiddenSymbols, noSpacesExpression })
+    const isStartsOrEndsWithPlusOrMinus = startsOrEndsWithPlusOrEndsWithMinus.test(noSpacesExpression)
+
+    if (!hasNumber) {
+        return {
+            result: 0,
+            message: MSSGS.noNumbers
+        }
+    }
 
     if (hasForbiddenSymbols) {
         return {
@@ -20,6 +29,7 @@ export const calculateResult = (expression: string) => {
             message: MSSGS.forbiddenSymbols
         }
     }
+
     if (isStartsOrEndsWithPlusOrMinus) {
         return {
             result: 0,
@@ -28,7 +38,7 @@ export const calculateResult = (expression: string) => {
     }
 
 
-    const hasRepeatedSymbolRegex = /([^\d\s])\1/g.test(expression)
+    const hasRepeatedSymbolRegex = /([^\d\s])\1/g.test(noSpacesExpression)
     if (hasRepeatedSymbolRegex) {
         return {
             result: 0,
@@ -36,14 +46,8 @@ export const calculateResult = (expression: string) => {
         }
     }
 
-    if (!hasNumber) {
-        return {
-            result: 0,
-            message: MSSGS.noNumbers
-        }
-    }
     return {
-        result: parseInt(eval(expression)),
+        result: parseInt(eval(noSpacesExpression)),
         message: ''
     }
 
